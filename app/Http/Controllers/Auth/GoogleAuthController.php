@@ -25,17 +25,24 @@ class GoogleAuthController extends Controller
     {
         $googleUser = Socialite::driver('google')->stateless()->user();
 
-        $user = User::updateOrCreate(
-            ['email' => $googleUser->getEmail()],
-            [
-                'name' => $googleUser->getName(),
-                'google_token' => $googleUser->token,
-                'password' => bcrypt(str()->random(16)),
-            ]
-        );
+        $updateData = [
+            'name' => $googleUser->getName(),
+            'google_token' => $googleUser->token,
+        'google_token_expires_at' => now()->addSeconds($googleUser->expiresIn ?? 3600),
+    ];
 
-        Auth::login($user);
+    // Google chỉ trả refresh_token ở LẦN ĐẦU cấp quyền, nên chỉ ghi đè nếu có giá trị mới
+    if (!empty($googleUser->refreshToken)) {
+        $updateData['google_refresh_token'] = $googleUser->refreshToken;
+    }
 
-        return redirect('/dashboard');
+    $user = User::updateOrCreate(
+        ['email' => $googleUser->getEmail()],
+        $updateData + ['password' => bcrypt(str()->random(16))]
+    );
+
+    Auth::login($user);
+
+    return redirect('/dashboard');
     }
 }
