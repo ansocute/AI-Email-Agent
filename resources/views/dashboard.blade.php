@@ -36,11 +36,10 @@
                     <span class="w-1.5 h-1.5 rounded-full" style="background: var(--teal);"></span>
                     Hộp thư
                 </a>
-                <div class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm" style="color: #8891A0;">
+                <a href="{{ route('actions.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[#8891A0] hover:text-white transition">
                     <span class="w-1.5 h-1.5 rounded-full" style="background: #45505F;"></span>
-                    Nhật ký hoạt động
-                    <span class="ml-auto text-[10px] px-1.5 py-0.5 rounded" style="background: #2E3A49; color: #8891A0;">sắp có</span>
-                </div>
+                    Đề xuất AI
+                </a>
             </nav>
             <div class="px-3 pb-5">
                 <form method="POST" action="{{ route('logout') }}">

@@ -9,7 +9,7 @@ class AgentAction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['email_id', 'type', 'content', 'status'];
+    protected $fillable = ['email_id', 'type', 'content', 'status', 'user_id'];
 
     public function email()
     {
@@ -19,5 +19,10 @@ class AgentAction extends Model
     public function calendarEvent()
     {
         return $this->hasOne(CalendarEvent::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

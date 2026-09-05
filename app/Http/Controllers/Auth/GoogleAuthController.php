@@ -28,21 +28,21 @@ class GoogleAuthController extends Controller
         $updateData = [
             'name' => $googleUser->getName(),
             'google_token' => $googleUser->token,
-        'google_token_expires_at' => now()->addSeconds($googleUser->expiresIn ?? 3600),
-    ];
+            'google_token_expires_at' => now()->addSeconds($googleUser->expiresIn ?? 3600),
+        ];
 
-    // Google chỉ trả refresh_token ở LẦN ĐẦU cấp quyền, nên chỉ ghi đè nếu có giá trị mới
-    if (!empty($googleUser->refreshToken)) {
-        $updateData['google_refresh_token'] = $googleUser->refreshToken;
-    }
+        // Google chỉ trả refresh_token ở LẦN ĐẦU cấp quyền, nên chỉ ghi đè nếu có giá trị mới
+        if (!empty($googleUser->refreshToken)) {
+            $updateData['google_refresh_token'] = $googleUser->refreshToken;
+        }
 
-    $user = User::updateOrCreate(
-        ['email' => $googleUser->getEmail()],
-        $updateData + ['password' => bcrypt(str()->random(16))]
-    );
+        $user = User::updateOrCreate(
+            ['email' => $googleUser->getEmail()],
+            $updateData + ['password' => bcrypt(str()->random(16))]
+        );
 
-    Auth::login($user);
+        Auth::login($user);
 
-    return redirect('/dashboard');
+        return redirect('/dashboard');
     }
 }

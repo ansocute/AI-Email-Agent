@@ -1,15 +1,15 @@
 <?php
 
 use App\Http\Controllers\Auth\GoogleAuthController;
+use App\Http\Controllers\AgentActionController;
 use App\Models\Email;
 use App\Services\AiClassifierService;
 use App\Services\GmailService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('login');
 
 Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google.redirect');
 Route::get('/auth/google/callback', [GoogleAuthController::class, 'callback'])->name('google.callback');
@@ -26,6 +26,14 @@ Route::get('/dashboard', function () {
 
     return view('dashboard', ['emails' => $emails]);
 })->middleware('auth')->name('dashboard');
+
+Route::get('/actions', [AgentActionController::class, 'index'])->middleware('auth')->name('actions.index');
+Route::post('/actions/{agentAction}/approve', [AgentActionController::class, 'approve'])
+    ->middleware('auth')
+    ->name('actions.approve');
+Route::post('/actions/{agentAction}/reject', [AgentActionController::class, 'reject'])
+    ->middleware('auth')
+    ->name('actions.reject');
 
 Route::post('/emails/sync', function () {
     $emails = (new GmailService(Auth::user()))->fetchRecentEmails(5);
