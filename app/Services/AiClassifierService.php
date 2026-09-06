@@ -11,7 +11,7 @@ class AiClassifierService
         $apiKey = env('GEMINI_API_KEY');
 
         $response = Http::post(
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={$apiKey}",
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key={$apiKey}",
             [
                 'contents' => [
                     [

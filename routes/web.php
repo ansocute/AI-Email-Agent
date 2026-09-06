@@ -3,8 +3,6 @@
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\AgentActionController;
 use App\Models\Email;
-use App\Services\AiClassifierService;
-use App\Services\GmailService;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
@@ -36,25 +34,6 @@ Route::post('/actions/{agentAction}/reject', [AgentActionController::class, 'rej
     ->name('actions.reject');
 
 Route::post('/emails/sync', function () {
-    $emails = (new GmailService(Auth::user()))->fetchRecentEmails(5);
-    $classifier = new AiClassifierService();
-
-    foreach ($emails as $emailData) {
-        $category = $classifier->classify($emailData['subject'], $emailData['content']);
-
-        Email::updateOrCreate(
-            [
-                'user_id' => Auth::id(),
-                'subject' => $emailData['subject'],
-                'sender' => $emailData['sender'],
-            ],
-            [
-                'content' => $emailData['content'],
-                'received_at' => $emailData['received_at'],
-                'category' => $category,
-            ]
-        );
-    }
-
-    return redirect()->route('dashboard')->with('synced', count($emails));
+    $count = (new \App\Services\EmailSyncPipeline())->run(Auth::user(), 5);
+    return redirect()->route('dashboard')->with('synced', $count);
 })->middleware('auth')->name('emails.sync');
