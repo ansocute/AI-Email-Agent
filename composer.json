@@ -13,7 +13,8 @@
         "google/apiclient": "*",
         "laravel/framework": "^13.8",
         "laravel/socialite": "^5.30",
-        "laravel/tinker": "^3.0"
+        "laravel/tinker": "^3.0",
+        "openai-php/laravel": "^0.20.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -85,7 +86,8 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": true
-        }
+        },
+        "process-timeout": 1800
     },
     "minimum-stability": "stable",
     "prefer-stable": true

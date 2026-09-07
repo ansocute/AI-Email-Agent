@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\GoogleAuthController;
 use App\Http\Controllers\AgentActionController;
 use App\Models\Email;
+use App\Services\AiClassifierService;
+use App\Services\GmailService;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
@@ -16,6 +18,10 @@ Route::post('/logout', function () {
     Auth::logout();
     return redirect('/');
 })->name('logout');
+
+// Route::get('/dashboard', function () {
+//     return 'Đăng nhập thành công! User: ' . Auth::user()->email;
+// })->middleware('auth');
 
 Route::get('/dashboard', function () {
     $emails = Email::where('user_id', Auth::id())

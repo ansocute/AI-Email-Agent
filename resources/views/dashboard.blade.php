@@ -89,26 +89,41 @@
             @else
                 <div class="rounded-xl border overflow-hidden" style="border-color: var(--line); background: white;">
                     @foreach($emails as $email)
-                        <div class="flex items-start gap-4 px-5 py-4 {{ !$loop->last ? 'border-b' : '' }}" style="border-color: var(--line);">
+                        <a href="{{ route('emails.show', $email) }}"
+                        class="flex items-start gap-4 px-5 py-4 {{ !$loop->last ? 'border-b' : '' }} hover:bg-gray-50 transition cursor-pointer"
+                        style="border-color: var(--line);">
+
                             <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-medium shrink-0"
                                 style="background: var(--teal-soft); color: var(--teal);">
                                 {{ mb_strtoupper(mb_substr($email->sender_name, 0, 1)) }}
                             </div>
+
                             <div class="flex-1 min-w-0">
                                 <div class="flex items-center justify-between gap-3">
-                                    <span class="text-sm font-medium truncate">{{ $email->sender_name }}</span>
+                                    <span class="text-sm font-medium truncate">
+                                        {{ $email->sender_name }}
+                                    </span>
+
                                     <span class="text-xs shrink-0" style="color: var(--ink-soft);">
                                         {{ $email->received_at?->diffForHumans() }}
                                     </span>
                                 </div>
-                                <p class="text-sm font-medium mt-0.5 truncate">{{ $email->subject }}</p>
-                                <p class="text-sm mt-0.5 truncate" style="color: var(--ink-soft);">{{ $email->content }}</p>
+
+                                <p class="text-sm font-medium mt-0.5 truncate">
+                                    {{ $email->subject }}
+                                </p>
+
+                                <p class="text-sm mt-0.5 truncate" style="color: var(--ink-soft);">
+                                    {{ $email->content }}
+                                </p>
                             </div>
+
                             <span class="text-xs font-medium px-2.5 py-1 rounded-full shrink-0"
                                 style="background: {{ $email->category_badge['bg'] }}; color: {{ $email->category_badge['text'] }};">
                                 {{ $email->category_badge['label'] }}
                             </span>
-                        </div>
+
+                        </a>
                     @endforeach
                 </div>
             @endif
