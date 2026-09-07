@@ -58,6 +58,8 @@ class EmailSyncPipeline
                         'type' => 'create_event',
                         'content' => 'Đề xuất lịch hẹn: ' . $slot['start']->format('d/m/Y H:i') . '–' . $slot['end']->format('H:i'),
                         'status' => 'pending',
+                        'event_start' => $slot['start'],
+                        'event_end' => $slot['end'],
                     ]);
                 }
             } catch (\Exception $e) {
