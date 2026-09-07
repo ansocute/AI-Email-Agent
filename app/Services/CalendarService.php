@@ -65,4 +65,16 @@ class CalendarService
 
         return null;
     }
+    public function createEvent(string $title, Carbon $start, Carbon $end): string
+    {
+        $event = new \Google\Service\Calendar\Event([
+            'summary' => $title,
+            'start' => ['dateTime' => $start->toRfc3339String()],
+            'end' => ['dateTime' => $end->toRfc3339String()],
+        ]);
+
+        $createdEvent = $this->service->events->insert('primary', $event);
+
+        return $createdEvent->getId();
+    }
 }
