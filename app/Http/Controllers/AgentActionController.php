@@ -14,12 +14,11 @@ class AgentActionController extends Controller
     {
         $actions = AgentAction::with(['email', 'user'])
             ->orderByDesc('created_at')
-            ->paginate(20);
+            ->paginate(10, ['*'], 'actions_page');
 
         $logs = ActivityLog::with('user')
             ->orderByDesc('timestamp')
-            ->limit(20)
-            ->get();
+            ->paginate(15, ['*'], 'logs_page');
 
         return view('agent-actions.index', compact('actions', 'logs'));
     }
@@ -33,13 +32,24 @@ class AgentActionController extends Controller
         $agentAction->update(['status' => 'approved']);
 
         if ($agentAction->type === 'create_event') {
-            CalendarEvent::create([
-                'agent_action_id' => $agentAction->id,
-                'title' => Str::of($agentAction->content)->before(PHP_EOL) ?: $agentAction->content,
-                'start_time' => now(),
-                'end_time' => now()->addHour(),
-                'status' => 'confirmed',
-            ]);
+            $title = (string) (Str::of($agentAction->content)->before(PHP_EOL) ?: $agentAction->content);
+            $start = $agentAction->event_start ?? now();
+            $end = $agentAction->event_end ?? now()->addHour();
+
+            try {
+                (new \App\Services\CalendarService(auth()->user()))->createEvent($title, $start, $end);
+
+                CalendarEvent::create([
+                    'agent_action_id' => $agentAction->id,
+                    'title' => $title,
+                    'start_time' => $start,
+                    'end_time' => $end,
+                    'status' => 'confirmed',
+                ]);
+            } catch (\Exception $e) {
+                \Log::error("Tạo sự kiện Google Calendar thất bại cho AgentAction #{$agentAction->id}: " . $e->getMessage());
+                return back()->with('error', 'Đã duyệt nhưng tạo sự kiện lịch thất bại: ' . $e->getMessage());
+            }
         }
 
         ActivityLog::create([

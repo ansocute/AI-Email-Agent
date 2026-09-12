@@ -11,6 +11,11 @@ class AgentAction extends Model
 
     protected $fillable = ['email_id', 'type', 'content', 'status', 'event_start', 'event_end'];
 
+    protected $casts = [
+        'event_start' => 'datetime',
+        'event_end' => 'datetime',
+    ];
+
     public function email()
     {
         return $this->belongsTo(Email::class);
