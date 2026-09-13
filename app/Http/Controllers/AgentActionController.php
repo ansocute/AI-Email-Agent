@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AgentAction;
 use App\Models\ActivityLog;
 use App\Models\CalendarEvent;
+use App\Services\CalendarService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -33,13 +34,28 @@ class AgentActionController extends Controller
         $agentAction->update(['status' => 'approved']);
 
         if ($agentAction->type === 'create_event') {
-            CalendarEvent::create([
+            $title = Str::of($agentAction->content)->before(PHP_EOL) ?: $agentAction->content;
+            $user = auth()->user();
+
+            $calendarEventData = [
                 'agent_action_id' => $agentAction->id,
-                'title' => Str::of($agentAction->content)->before(PHP_EOL) ?: $agentAction->content,
-                'start_time' => now(),
-                'end_time' => now()->addHour(),
+                'title' => $title,
+                'start_time' => $agentAction->event_start ?? now(),
+                'end_time' => $agentAction->event_end ?? now()->addHour(),
                 'status' => 'confirmed',
-            ]);
+            ];
+
+            if ($user && filled($user->google_token)) {
+                $googleEventId = (new CalendarService($user))->createEvent(
+                    $title,
+                    $agentAction->event_start ?? now(),
+                    $agentAction->event_end ?? now()->addHour()
+                );
+
+                $calendarEventData['google_event_id'] = $googleEventId;
+            }
+
+            CalendarEvent::create($calendarEventData);
         }
 
         ActivityLog::create([

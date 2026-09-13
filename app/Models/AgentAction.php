@@ -9,7 +9,12 @@ class AgentAction extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['email_id', 'type', 'content', 'status', 'event_start', 'event_end'];
+    protected $fillable = ['email_id', 'type', 'content', 'status', 'user_id', 'event_start', 'event_end'];
+
+    protected $casts = [
+        'event_start' => 'datetime',
+        'event_end'   => 'datetime',
+    ];
 
     public function email()
     {

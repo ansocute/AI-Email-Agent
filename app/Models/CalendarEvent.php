@@ -9,7 +9,7 @@ class CalendarEvent extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['agent_action_id', 'title', 'start_time', 'end_time', 'status'];
+    protected $fillable = ['agent_action_id', 'title', 'start_time', 'end_time', 'status', 'google_event_id'];
 
     public function agentAction()
     {

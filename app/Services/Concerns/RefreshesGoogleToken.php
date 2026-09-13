@@ -9,6 +9,10 @@ trait RefreshesGoogleToken
 {
     protected function buildAuthenticatedClient(User $user): Client
     {
+        if (blank($user->google_token)) {
+            throw new \RuntimeException("Google token chưa được kết nối cho user {$user->email}.");
+        }
+
         $client = new Client();
         $client->setClientId(config('services.google.client_id'));
         $client->setClientSecret(config('services.google.client_secret'));
