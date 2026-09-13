@@ -6,6 +6,7 @@ use App\Models\Email;
 use App\Services\AiClassifierService;
 use App\Services\GmailService;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\EmailController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -31,6 +32,11 @@ Route::get('/dashboard', function () {
     return view('dashboard', ['emails' => $emails]);
 })->middleware('auth')->name('dashboard');
 
+Route::get('/emails', [EmailController::class, 'index'])->middleware('auth')->name('emails.index');
+Route::get('/emails/{email}', [EmailController::class, 'show'])->middleware('auth')->name('emails.show');
+Route::post('/emails/{email}/generate-draft', [EmailController::class, 'generateDraft'])->middleware('auth')->name('emails.generate-draft');
+Route::post('/emails/{email}/update-draft', [EmailController::class, 'updateDraft'])->middleware('auth')->name('emails.update-draft');
+Route::post('/emails/{email}/send-draft', [EmailController::class, 'sendEmail'])->middleware('auth')->name('emails.send-draft');
 Route::get('/actions', [AgentActionController::class, 'index'])->middleware('auth')->name('actions.index');
 Route::post('/actions/{agentAction}/approve', [AgentActionController::class, 'approve'])
     ->middleware('auth')

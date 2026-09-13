@@ -9,6 +9,7 @@ use App\Models\Email;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Http;
 
 class AgentActionTest extends TestCase
 {
@@ -49,6 +50,14 @@ class AgentActionTest extends TestCase
 
     public function test_can_approve_action_and_records_log()
     {
+        // CalendarService gọi Google Calendar API thật qua google/apiclient (không đi qua
+        // Http::fake). Dùng Mockery "overload" để thay thế toàn bộ class này trong lúc test,
+        // tránh gọi mạng thật và tránh cần google_token hợp lệ.
+        $calendarMock = \Mockery::mock('overload:' . \App\Services\CalendarService::class);
+        $calendarMock->shouldReceive('createEvent')
+            ->once()
+            ->andReturn('fake-google-event-id');
+
         $user = User::factory()->create();
         $email = Email::create([
             'user_id' => $user->id,

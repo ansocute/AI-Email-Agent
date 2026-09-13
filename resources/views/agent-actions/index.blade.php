@@ -209,7 +209,7 @@
                         <p class="text-xs mt-0.5" style="color: var(--ink-soft);">Lịch sử thao tác duyệt, từ chối và các hoạt động của hệ thống</p>
                     </div>
                     <span class="text-xs px-2.5 py-1 rounded-md" style="background: white; border: 1px solid var(--line); color: var(--ink-soft);">
-                        {{ count($logs ?? []) }} bản ghi gần nhất
+                        Tổng cộng: {{ $logs->total() }} bản ghi
                     </span>
                 </div>
 
@@ -241,6 +241,11 @@
                             @endforeach
                         </div>
                     </div>
+
+                    <div class="mt-4">
+                        {{ $logs->links() }}
+                    </div>
+                    
                 @endif
             </section>
 

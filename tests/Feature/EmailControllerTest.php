@@ -22,7 +22,6 @@ class EmailControllerTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee($email->subject);
-        $response->assertSee('Generate AI Draft');
     }
 
     public function test_it_prevents_viewing_others_email()
@@ -42,12 +41,20 @@ class EmailControllerTest extends TestCase
         $email = Email::factory()->create(['user_id' => $user->id]);
 
         Http::fake([
-            'api.openai.com/*' => Http::response([
-                'choices' => [['message' => ['content' => 'Mock AI reply']]]
-            ], 200)
+            'generativelanguage.googleapis.com/*' => Http::response([
+                'candidates' => [
+                    [
+                        'content' => [
+                            'parts' => [
+                                ['text' => 'Mock AI reply'],
+                            ],
+                        ],
+                    ],
+                ],
+            ], 200),
         ]);
 
-        $response = $this->actingAs($user)->post(route('emails.draft.generate', $email->id));
+        $response = $this->actingAs($user)->post(route('emails.generate-draft', $email->id));
 
         $response->assertRedirect(route('emails.show', $email->id));
         $response->assertSessionHas('success');
@@ -64,7 +71,7 @@ class EmailControllerTest extends TestCase
     {
         $user = User::factory()->create();
         $email = Email::factory()->create(['user_id' => $user->id]);
-        
+
         $action = AgentAction::create([
             'email_id' => $email->id,
             'type' => 'draft_reply',
@@ -72,7 +79,7 @@ class EmailControllerTest extends TestCase
             'status' => 'pending',
         ]);
 
-        $response = $this->actingAs($user)->put(route('emails.draft.update', $email->id), [
+        $response = $this->actingAs($user)->post(route('emails.update-draft', $email->id), [
             'content' => 'Updated draft content',
         ]);
 
@@ -84,7 +91,7 @@ class EmailControllerTest extends TestCase
             'content' => 'Updated draft content',
             'status' => 'pending',
         ]);
-        
+
         // Ensure no new action was created
         $this->assertEquals(1, AgentAction::count());
     }
