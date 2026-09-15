@@ -6,12 +6,11 @@
 
 <div class="max-w-7xl mx-auto">
 
-```
 {{-- Flash Messages --}}
 @if(session('success'))
     <div class="mb-6 rounded-md bg-green-50 p-4 border border-green-200">
         <div class="flex">
-            <div class="flex-shrink-0">
+            <div class="shrink-0">
                 <svg class="h-5 w-5 text-green-400"
                      viewBox="0 0 20 20"
                      fill="currentColor">
@@ -34,7 +33,7 @@
 @if(session('error'))
     <div class="mb-6 rounded-md bg-red-50 p-4 border border-red-200">
         <div class="flex">
-            <div class="flex-shrink-0">
+            <div class="shrink-0">
                 <svg class="h-5 w-5 text-red-400"
                      viewBox="0 0 20 20"
                      fill="currentColor">
@@ -56,10 +55,10 @@
 
 {{-- Back Button --}}
 <div class="mb-6">
-    <a href="{{ route('emails.index') }}"
-       class="inline-flex items-center text-sm font-medium text-indigo-600 hover:text-indigo-900">
+     <a href="{{ route('dashboard') }}"
+         class="group inline-flex items-center gap-2 text-sm font-semibold text-slate-600 transition hover:text-teal-700">
 
-        <svg class="mr-2 h-5 w-5"
+        <svg class="h-5 w-5 transition-transform group-hover:-translate-x-1"
              fill="none"
              viewBox="0 0 24 24"
              stroke="currentColor">
@@ -69,56 +68,57 @@
                   d="M15 19l-7-7 7-7"/>
         </svg>
 
-        Back to Emails
+        Quay lại hộp thư
     </a>
 </div>
 
 
 {{-- Page Header --}}
-<div class="mb-6">
-    <h1 class="text-2xl font-bold text-gray-900">
+<div class="mb-8 rounded-2xl border border-slate-200 bg-white px-6 py-7 shadow-sm sm:px-8">
+    <p class="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-teal-700">Chi tiết thư</p>
+    <h1 class="wrap-break-word text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
         {{ $email->subject }}
     </h1>
 
-    <p class="mt-1 text-sm text-gray-500">
-        Email ID: {{ $email->id }}
+    <p class="mt-2 text-sm text-slate-500">
+        Email #{{ $email->id }} · {{ $email->received_at?->format('d/m/Y H:i') ?? 'Chưa có thời gian nhận' }}
     </p>
 </div>
 
 
 {{-- Main Grid --}}
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
 
 
     {{-- ===================================================== --}}
     {{-- ORIGINAL EMAIL --}}
     {{-- ===================================================== --}}
 
-    <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
-        <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <div class="border-b border-slate-200 bg-slate-50 px-6 py-5">
 
-            <h2 class="text-lg font-semibold text-gray-900">
-                Original Email
+            <h2 class="text-lg font-semibold text-slate-900">
+                Email gốc
             </h2>
 
-            <p class="text-sm text-gray-500 mt-1">
+            <p class="mt-1 text-sm text-slate-500">
                 Nội dung email gốc
             </p>
 
         </div>
 
 
-        <div class="px-6 py-6">
+        <div class="space-y-6 px-6 py-6">
 
             {{-- From --}}
-            <div class="mb-5">
+            <div>
 
-                <p class="text-sm font-medium text-gray-500">
-                    From
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    Người gửi
                 </p>
 
-                <p class="mt-1 text-sm font-medium text-gray-900 break-all">
+                <p class="mt-1 break-all text-sm font-medium text-slate-800">
                     {{ $email->sender }}
                 </p>
 
@@ -126,13 +126,13 @@
 
 
             {{-- Subject --}}
-            <div class="mb-5">
+            <div>
 
-                <p class="text-sm font-medium text-gray-500">
-                    Subject
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    Tiêu đề
                 </p>
 
-                <p class="mt-1 text-sm font-medium text-gray-900">
+                <p class="mt-1 text-sm font-medium text-slate-800">
                     {{ $email->subject }}
                 </p>
 
@@ -162,7 +162,7 @@
                     Message
                 </p>
 
-                <div class="p-4 bg-gray-50 rounded-lg border border-gray-200 text-gray-800 whitespace-pre-wrap break-words font-serif leading-relaxed">
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-5 font-serif leading-relaxed text-slate-700 whitespace-pre-wrap wrap-break-word">
                     {{ $email->content }}
                 </div>
 
@@ -178,20 +178,20 @@
     {{-- AI DRAFT --}}
     {{-- ===================================================== --}}
 
-    <div class="bg-white shadow-sm rounded-lg border border-gray-200">
+    <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
 
         {{-- Header --}}
-        <div class="px-6 py-4 border-b border-gray-200 bg-indigo-50">
+        <div class="border-b border-teal-100 bg-teal-50 px-6 py-5">
 
             <div class="flex justify-between items-center">
 
                 <div>
 
-                    <h2 class="text-lg font-semibold text-indigo-900">
+                    <h2 class="text-lg font-semibold text-teal-950">
                         AI Draft Reply
                     </h2>
 
-                    <p class="text-sm text-indigo-700 mt-1">
+                    <p class="mt-1 text-sm text-teal-700">
                         AI generated response
                     </p>
 
@@ -207,7 +207,7 @@
                         @csrf
 
                         <button type="submit"
-                                class="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                class="inline-flex items-center rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500">
 
                             <svg class="mr-2 h-4 w-4"
                                  fill="none"
@@ -318,7 +318,7 @@
                                 rows="14"
                                 required
                                 maxlength="10000"
-                                class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 text-sm text-gray-900">{{ old('content', $draft->content) }}</textarea>
+                                class="block w-full rounded-xl border-slate-200 bg-slate-50 p-4 text-sm text-slate-900 shadow-sm focus:border-teal-500 focus:ring-teal-500">{{ old('content', $draft->content) }}</textarea>
 
 
                             @error('content')
@@ -336,7 +336,7 @@
                         <div class="flex justify-end">
 
                             <button type="submit"
-                                    class="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    class="inline-flex items-center rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500">
 
                                 <svg class="mr-2 h-4 w-4"
                                      fill="none"
@@ -373,24 +373,35 @@
                             </h3>
 
                             <p class="mt-1 text-sm text-gray-500">
-                                Email sẽ được gửi đến:
-                            </p>
-
-                            <p class="mt-1 text-sm font-medium text-gray-700 break-all">
-                                {{ $email->sender }}
+                                Bạn có thể thay đổi người nhận trước khi gửi.
                             </p>
 
                         </div>
 
 
-                        <form action="{{ route('emails.send', $email) }}"
+                        <form action="{{ route('emails.send-draft', $email) }}"
                               method="POST"
                               onsubmit="return confirm('Bạn có chắc muốn gửi email này không?');">
 
                             @csrf
 
+                            <label for="recipient" class="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
+                                Người nhận
+                            </label>
+                            <input
+                                id="recipient"
+                                name="recipient"
+                                type="email"
+                                required
+                                value="{{ old('recipient', $email->sender_email ?? $email->sender) }}"
+                                placeholder="nguoi.nhan@example.com"
+                                class="mb-4 block w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-teal-500 focus:ring-2 focus:ring-teal-100">
+                            @error('recipient')
+                                <p class="mb-4 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+
                             <button type="submit"
-                                    class="w-full inline-flex justify-center items-center px-4 py-3 rounded-md text-sm font-semibold text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                                    class="w-full inline-flex justify-center items-center rounded-lg bg-teal-700 px-4 py-3 text-sm font-semibold text-white transition hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500">
 
                                 <svg class="mr-2 h-5 w-5"
                                      fill="none"
@@ -504,7 +515,7 @@
                         @csrf
 
                         <button type="submit"
-                                class="inline-flex items-center px-5 py-2.5 rounded-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                class="inline-flex items-center rounded-lg bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-500">
 
                             <svg class="mr-2 h-5 w-5"
                                  fill="none"
@@ -533,7 +544,6 @@
     </div>
 
 </div>
-```
 
 </div>
 
