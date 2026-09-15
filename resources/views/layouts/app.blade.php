@@ -1,28 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'AI Email Agent')</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f5f4f0; }
+        .font-serif-brand { font-family: 'Fraunces', serif; }
+    </style>
 </head>
-<body class="bg-gray-100 text-gray-900 font-sans antialiased">
-    <nav class="bg-white shadow mb-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex">
-                    <div class="flex-shrink-0 flex items-center">
-                        <a href="{{ route('emails.index') }}" class="text-xl font-bold text-indigo-600">AI Email Agent</a>
-                    </div>
-                </div>
+<body class="text-slate-900 antialiased">
+    <nav class="mb-8 border-b border-slate-800 bg-[#1B2430] text-white shadow-lg">
+        <div class="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center">
-                    <span class="text-gray-500 mr-4">{{ Auth::user()->name ?? 'Guest' }}</span>
+                    <a href="{{ route('dashboard') }}" class="font-serif-brand text-xl tracking-tight">Inbox Agent</a>
                 </div>
-            </div>
+                <div class="flex items-center ">
+                    <span class="text-sm text-slate-300 mr-8">{{ Auth::user()->name ?? 'Guest' }}</span>
+                </div>
         </div>
     </nav>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+    <div class="mx-auto max-w-7xl px-4 pb-12 sm:px-6 lg:px-8">
         @if(session('success'))
             <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
                 <span class="block sm:inline">{{ session('success') }}</span>
