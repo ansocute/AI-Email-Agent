@@ -7,7 +7,7 @@ use App\Models\AgentAction;
 use App\Services\AIDraftService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Services\GmailService;
+use Illuminate\Support\Facades\Mail;
 
 class EmailController extends Controller
 {
@@ -105,7 +105,9 @@ public function sendEmail(
     if ($email->user_id !== Auth::id()) {
         abort(403, 'Unauthorized action.');
     }
-    $gmailService = new GmailService(Auth::user());
+    $request->validate([
+        'recipient' => ['required', 'email', 'max:255'],
+    ]);
 
     $draft = AgentAction::where('email_id', $email->id)
         ->where('type', 'draft_reply')
@@ -118,13 +120,7 @@ public function sendEmail(
     }
 
     try {
-        // Lấy email người nhận
-        $to = $email->sender;
-
-        // Nếu dạng: Nguyen Van A <abc@gmail.com>
-        if (preg_match('/<([^>]+)>/', $email->sender, $matches)) {
-            $to = $matches[1];
-        }
+        $to = $request->string('recipient')->toString();
 
         $subject = $email->subject;
 
@@ -136,12 +132,9 @@ public function sendEmail(
             $subject = 'Re: ' . $subject;
         }
 
-        // Gửi Gmail
-        $result = (new GmailService(Auth::user()))->sendEmail(
-            $to,
-            $subject,
-            $draft->content
-        );
+        Mail::raw($draft->content, function ($message) use ($to, $subject): void {
+            $message->to($to)->subject($subject);
+        });
 
         // Gmail gửi thành công → cập nhật DB
         $draft->update([

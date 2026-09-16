@@ -36,6 +36,15 @@ class Email extends Model
         return $this->sender;
     }
 
+    public function getSenderEmailAttribute(): string
+    {
+        if (preg_match('/<([^>]+)>/', $this->sender, $matches)) {
+            return trim($matches[1]);
+        }
+
+        return trim($this->sender);
+    }
+
     /**
      * Nhãn hiển thị tiếng Việt + màu sắc theo category
      */

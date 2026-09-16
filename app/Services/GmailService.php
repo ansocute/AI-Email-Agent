@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use App\Services\Concerns\RefreshesGoogleToken;
 use Google\Service\Gmail;
+use Illuminate\Support\Facades\Mail;
 
 class GmailService
 {
@@ -66,7 +67,7 @@ class GmailService
     }
 
     /**
-     * Gửi email thông qua Gmail API.
+     * Gửi email qua mailer đã cấu hình (SMTP trong môi trường production).
      */
     public function sendEmail(
         string $to,
@@ -74,61 +75,13 @@ class GmailService
         string $body
     ): array {
 
-        /*
-        |--------------------------------------------------------------------------
-        | Tạo MIME message
-        |--------------------------------------------------------------------------
-        */
-
-        $rawMessage =
-            "To: {$to}\r\n" .
-            "Subject: {$subject}\r\n" .
-            "MIME-Version: 1.0\r\n" .
-            "Content-Type: text/plain; charset=UTF-8\r\n" .
-            "\r\n" .
-            $body;
-
-        /*
-        |--------------------------------------------------------------------------
-        | Gmail yêu cầu Base64 URL-safe
-        |--------------------------------------------------------------------------
-        */
-
-        $encodedMessage = rtrim(
-            strtr(
-                base64_encode($rawMessage),
-                '+/',
-                '-_'
-            ),
-            '='
-        );
-
-        /*
-        |--------------------------------------------------------------------------
-        | Tạo Gmail Message
-        |--------------------------------------------------------------------------
-        */
-
-        $message = new \Google\Service\Gmail\Message();
-
-        $message->setRaw($encodedMessage);
-
-        /*
-        |--------------------------------------------------------------------------
-        | Gửi
-        |--------------------------------------------------------------------------
-        */
-
-        $sentMessage = $this->service
-            ->users_messages
-            ->send(
-                'me',
-                $message
-            );
+        Mail::raw($body, function ($message) use ($to, $subject): void {
+            $message->to($to)->subject($subject);
+        });
 
         return [
-            'id' => $sentMessage->getId(),
-            'thread_id' => $sentMessage->getThreadId(),
+            'to' => $to,
+            'subject' => $subject,
         ];
     }
 }
