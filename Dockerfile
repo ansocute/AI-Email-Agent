@@ -31,8 +31,7 @@ WORKDIR /var/www/html
 COPY . .
 
 # 7. Chạy composer install
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
-
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
 # 8. Phân quyền cho thư mục storage và bootstrap/cache
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
