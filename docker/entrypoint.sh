@@ -1,8 +1,13 @@
 #!/bin/sh
 set -e
 
-php artisan migrate --force
-php artisan config:cache
+# Tự động cache config & route khi container khởi động
+php artisan config:clear
+php artisan cache:clear
+php artisan route:cache
 php artisan view:cache
 
-exec apache2-foreground
+# Chạy migration database Neon
+php artisan migrate --force
+
+exec "$@"
