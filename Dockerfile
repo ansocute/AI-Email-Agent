@@ -1,6 +1,7 @@
-FROM php:8.2-apache
+# Nâng từ php:8.2 lên php:8.3
+FROM php:8.3-apache
 
-# 1. Cài đặt các thư viện hệ thống cần thiết (bao gồm libpq-dev cho PostgreSQL)
+# 1. Cài đặt thư viện hệ thống
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -12,30 +13,30 @@ RUN apt-get update && apt-get install -y \
     unzip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# 2. Cài đặt các PHP extensions bắt buộc cho Laravel & Neon PostgreSQL
+# 2. Cài PHP extensions cho Laravel & Neon Postgres
 RUN docker-php-ext-install pdo pdo_pgsql mbstring exif pcntl bcmath gd
 
-# 3. Bật module rewrite của Apache cho Laravel
+# 3. Bật rewrite module cho Apache
 RUN a2enmod rewrite
 
-# 4. Cấu hình Apache DocumentRoot chỉ hướng vào thư mục public/ của Laravel
+# 4. Cấu hình DocumentRoot
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/conf-available/*.conf
 
-# 5. Cài đặt Composer
+# 5. Cài Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# 6. Thiết lập thư mục làm việc và copy code
 WORKDIR /var/www/html
 COPY . .
 
-# 7. Chạy composer install
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs
-# 8. Phân quyền cho thư mục storage và bootstrap/cache
+# 6. Thêm --no-scripts để chặn package:discover chạy lúc chưa có APP_KEY/ENV
+RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --ignore-platform-reqs --no-scripts
+
+# 7. Phân quyền thư mục
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# 9. Copy file entrypoint và cấp quyền thực thi (nếu có file docker/entrypoint.sh)
+# 8. Copy và cấp quyền entrypoint
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
